@@ -38,7 +38,12 @@ namespace AzureStorageTutorial
 			uploadFile(container);
 
 			//Loop over blob items in container
-			loopOverBlobItems(container);
+			var shouldUseFlatBlobListStyle = false;
+			loopOverAndListBlobItems(container, shouldUseFlatBlobListStyle);
+
+			//Loop over blob items in container and list as flat
+			shouldUseFlatBlobListStyle = true;
+			loopOverAndListBlobItems(container, shouldUseFlatBlobListStyle);
 		}
 
 		//Parse the connection string and return a reference to the storage account
@@ -79,9 +84,9 @@ namespace AzureStorageTutorial
 		}
 
 		//Output length and uri of each blob item
-		private void loopOverBlobItems(CloudBlobContainer container)
+		private void loopOverAndListBlobItems(CloudBlobContainer container, bool shouldUseFlatBlobListing)
 		{
-			foreach (IListBlobItem item in container.ListBlobs(null, false))
+			foreach (IListBlobItem item in container.ListBlobs(null, shouldUseFlatBlobListing))
 			{
 				if (item.GetType() == typeof(CloudBlockBlob))
 				{
