@@ -56,4 +56,3 @@ C:\MyVSProjects\AzureStorageTutorial\AzureStorageTutorial\AzureStorageTutorial\b
 C:\MyVSProjects\AzureStorageTutorial\AzureStorageTutorial\AzureStorageTutorial\bin\Debug\zh-Hant\System.Spatial.resources.dll
 C:\MyVSProjects\AzureStorageTutorial\AzureStorageTutorial\AzureStorageTutorial\obj\Debug\AzureStorageTutorial.exe
 C:\MyVSProjects\AzureStorageTutorial\AzureStorageTutorial\AzureStorageTutorial\obj\Debug\AzureStorageTutorial.pdb
-C:\MyVSProjects\AzureStorageTutorial\AzureStorageTutorial\AzureStorageTutorial\obj\Debug\AzureStorageTutorial.csprojResolveAssemblyReference.cache

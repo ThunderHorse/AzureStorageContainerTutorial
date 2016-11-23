@@ -29,21 +29,16 @@ namespace AzureStorageTutorial
 			//CloudBlobContainer - Reference to a container (every blob in Azure storage must reside in a container)
 			CloudBlobContainer container = cloudBlobClient.GetContainerReference("myblobstorage");
 
-			try
-			{
-				container.CreateIfNotExists();
-			}
-			catch (Exception ex)
-			{
-				throw ex;
-			}
-
+			container.CreateIfNotExists();
 
 			//Set permissions on cloudBlobContainer
 			setContainerPermissions(container);
 
 			//Upload file to block blob
 			uploadFile(container);
+
+			//Loop over blob items in container
+			loopOverBlobItems(container);
 		}
 
 		//Parse the connection string and return a reference to the storage account
@@ -80,6 +75,32 @@ namespace AzureStorageTutorial
 			using (var fileStream = System.IO.File.OpenRead(filePath))
 			{
 				blockBlob.UploadFromStream(fileStream);
+			}
+		}
+
+		//Output length and uri of each blob item
+		private void loopOverBlobItems(CloudBlobContainer container)
+		{
+			foreach (IListBlobItem item in container.ListBlobs(null, false))
+			{
+				if (item.GetType() == typeof(CloudBlockBlob))
+				{
+					CloudBlockBlob blob = (CloudBlockBlob)item;
+
+					Console.WriteLine("Block blob of length {0}: {1}", blob.Properties.Length, blob.Uri);
+				}
+				else if (item.GetType() == typeof(CloudPageBlob))
+				{
+					CloudPageBlob pageBlob = (CloudPageBlob)item;
+
+					Console.WriteLine("Page blob of length {0}: {1}", pageBlob.Properties.Length, pageBlob.Uri);
+				}
+				else if (item.GetType() == typeof(CloudBlobDirectory))
+				{
+					CloudBlobDirectory directoryBlob = (CloudBlobDirectory)item;
+
+					Console.WriteLine("Directory: {0}", directoryBlob.Uri);
+				}
 			}
 		}
 	}
