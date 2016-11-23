@@ -27,11 +27,23 @@ namespace AzureStorageTutorial
 			var cloudBlobClient = cloudStorageAccount.CreateCloudBlobClient();
 
 			//CloudBlobContainer - Reference to a container (every blob in Azure storage must reside in a container)
-			CloudBlobContainer container = cloudBlobClient.GetContainerReference("container");
-			container.CreateIfNotExists();
+			CloudBlobContainer container = cloudBlobClient.GetContainerReference("myblobstorage");
+
+			try
+			{
+				container.CreateIfNotExists();
+			}
+			catch (Exception ex)
+			{
+				throw ex;
+			}
+
 
 			//Set permissions on cloudBlobContainer
 			setContainerPermissions(container);
+
+			//Upload file to block blob
+			uploadFile(container);
 		}
 
 		//Parse the connection string and return a reference to the storage account
@@ -54,6 +66,21 @@ namespace AzureStorageTutorial
 			{
 				PublicAccess = BlobContainerPublicAccessType.Blob
 			});
+		}
+
+		//Upload file to block blob
+		private void uploadFile(CloudBlobContainer container)
+		{
+			var filePath = @"C:\Temp\TestingBlockBlobs.txt";
+
+			//Retrieve reference to blob named "myblob"
+			CloudBlockBlob blockBlob = container.GetBlockBlobReference("myblob");
+
+			//Create or overwrite the "myblob" blob with contents from a local file
+			using (var fileStream = System.IO.File.OpenRead(filePath))
+			{
+				blockBlob.UploadFromStream(fileStream);
+			}
 		}
 	}
 }

@@ -1,5 +1,4 @@
 C:\MyVSProjects\AzureStorageTutorial\AzureStorageTutorial\AzureStorageTutorial\bin\Debug\AzureStorageTutorial.exe.config
-C:\MyVSProjects\AzureStorageTutorial\AzureStorageTutorial\AzureStorageTutorial\obj\Debug\AzureStorageTutorial.csprojResolveAssemblyReference.cache
 C:\MyVSProjects\AzureStorageTutorial\AzureStorageTutorial\AzureStorageTutorial\bin\Debug\AzureStorageTutorial.exe
 C:\MyVSProjects\AzureStorageTutorial\AzureStorageTutorial\AzureStorageTutorial\bin\Debug\AzureStorageTutorial.pdb
 C:\MyVSProjects\AzureStorageTutorial\AzureStorageTutorial\AzureStorageTutorial\bin\Debug\Microsoft.Azure.KeyVault.Core.dll
@@ -57,3 +56,4 @@ C:\MyVSProjects\AzureStorageTutorial\AzureStorageTutorial\AzureStorageTutorial\b
 C:\MyVSProjects\AzureStorageTutorial\AzureStorageTutorial\AzureStorageTutorial\bin\Debug\zh-Hant\System.Spatial.resources.dll
 C:\MyVSProjects\AzureStorageTutorial\AzureStorageTutorial\AzureStorageTutorial\obj\Debug\AzureStorageTutorial.exe
 C:\MyVSProjects\AzureStorageTutorial\AzureStorageTutorial\AzureStorageTutorial\obj\Debug\AzureStorageTutorial.pdb
+C:\MyVSProjects\AzureStorageTutorial\AzureStorageTutorial\AzureStorageTutorial\obj\Debug\AzureStorageTutorial.csprojResolveAssemblyReference.cache
