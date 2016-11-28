@@ -118,6 +118,8 @@ namespace AzureStorageTutorial
 		//Downloading Blob Data
 		private void downloadBlobs(CloudBlobContainer container)
 		{
+			var downloadFilePath = FILE_PATH + FILE_TO_DOWNLOAD;
+
 			CloudBlockBlob blockBlob = container.GetBlockBlobReference("myblob");
 
 			//To in memory stream
@@ -126,12 +128,16 @@ namespace AzureStorageTutorial
 			{
 				blockBlob.DownloadToStream(memoryStream);
 				text = System.Text.Encoding.UTF8.GetString(memoryStream.ToArray());
+
+				Console.WriteLine("Downloaded to stream text: {0}", text);
 			}
 
 			//To physical filepath
-			using (var fileStream = System.IO.File.OpenWrite(FILE_PATH + FILE_TO_DOWNLOAD))
+			using (var fileStream = System.IO.File.OpenWrite(downloadFilePath))
 			{
 				blockBlob.DownloadToStream(fileStream);
+
+				Console.WriteLine("Path to downloaded file: {0}", downloadFilePath);
 			}
 		}
 	}
