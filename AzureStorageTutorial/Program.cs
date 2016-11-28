@@ -153,6 +153,8 @@ namespace AzureStorageTutorial
 		private void deleteBlobs(CloudBlobContainer container)
 		{
 			var myBlob = getBlockBlob(container, MY_BLOB_NAME);
+
+			myBlob.Delete();
 		}
 
 		#region Helper Methods
