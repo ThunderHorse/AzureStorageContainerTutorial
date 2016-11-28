@@ -19,6 +19,7 @@ namespace AzureStorageTutorial
 
 		private const string MY_CONTAINER_NAME = "myblobstorage";
 		private const string MY_BLOB_NAME = "myblob";
+		private const string APPEND_BLOB_NAME = "append-blob.log";
 
 		private const string STORAGE_ACCT_CONN_STRING_NAME = "StorageConnectionString";
 
@@ -58,8 +59,17 @@ namespace AzureStorageTutorial
 			//Download blobs
 			downloadBlobs(container);
 
+			//List blobs in pages asynchronously
+			//NOTE: Something is off with this method, await is not awaiting
+			//await listBlobsSegmentedInFlatListing(container);
+
+			//Write to append blob
+			writeToAppendBlob(container);
+
 			//Delete blobs
 			deleteBlobs(container);
+
+
 		}
 
 		//Parse the connection string and return a reference to the storage account
@@ -72,12 +82,11 @@ namespace AzureStorageTutorial
 		}
 
 		//Change blob container permission to public access
-		private void setContainerPermissions(CloudBlobContainer container)
+		private static void setContainerPermissions(CloudBlobContainer container)
 		{
 			//NOTE: Anyone on the Internet can see blobs in a public container,
 			//but you can modify or delete them only if you have the appropriate
 			//account access key or a shared access signature.
-
 			container.SetPermissions(new BlobContainerPermissions
 			{
 				PublicAccess = BlobContainerPublicAccessType.Blob
@@ -149,16 +158,81 @@ namespace AzureStorageTutorial
 			}
 		}
 
+		async private static Task<BlobResultSegment> listBlobsSegmentedInFlatListing(CloudBlobContainer container)
+		{
+			Console.WriteLine("List blobs in pages: ");
+
+			int i = 0;
+			BlobContinuationToken continuationToken = null;
+			BlobResultSegment resultSegment = null;
+
+			//Call ListBlobsSegmentedAsync and enumerate the result segment returned, while the continuation token is non-null.
+			//When the continuation token is null, the last page has been returned and execution can exit loop
+			do
+			{
+				//This overload allows control of the page size. You can return all remaining results by passing null for the maxResults parameter,
+				//or by calling a different overload.
+				resultSegment = await container.ListBlobsSegmentedAsync("", true, BlobListingDetails.All, 10, continuationToken, null, null);
+
+				if (resultSegment.Results.Count<IListBlobItem>() > 0)
+				{
+					Console.WriteLine("Page {0}: ", i++);
+				}
+
+				foreach (var blobItem in resultSegment.Results)
+				{
+					Console.WriteLine("\t{0}", blobItem.StorageUri.PrimaryUri);
+				}
+				Console.WriteLine();
+
+				//Get the continuation token
+				continuationToken = resultSegment.ContinuationToken;
+			}
+			while (continuationToken != null);
+
+			return resultSegment;
+		}
+
+		private void writeToAppendBlob(CloudBlobContainer container)
+		{
+			//Get a reference to the append blob
+			var appendBlob = container.GetAppendBlobReference(APPEND_BLOB_NAME);
+
+			//Create the append blob. Note that if the blob already exists, the CreateOrReplace() method will overwrite it.
+			//You can check whether the blob exist to avoid overwriting it by using CloudAppendBlob.Exist()
+			appendBlob.CreateOrReplace();
+
+			int numBlocks = 10;
+
+			//Generate an array of random bytes
+			Random rnd = new Random();
+			byte[] bytes = new byte[numBlocks];
+			rnd.NextBytes(bytes);
+
+			//Simulate a logging operation by writing text data and byte data to the end of the append blob.
+			for (int i = 0; i < numBlocks; i++)
+			{
+				appendBlob.AppendText(String.Format("Timestamp: {0:u} \tLog Entry: {1}{2}", DateTime.UtcNow, bytes[i], Environment.NewLine));
+			}
+
+			//Read the append blob to the console window
+			Console.WriteLine(appendBlob.DownloadText());
+		}
+
 		//Deleting Blob Data
 		private void deleteBlobs(CloudBlobContainer container)
 		{
 			var myBlob = getBlockBlob(container, MY_BLOB_NAME);
 
 			myBlob.Delete();
+
+			var appendBlob = getBlockBlob(container, APPEND_BLOB_NAME);
+
+			appendBlob.Delete();
 		}
 
 		#region Helper Methods
-		private CloudBlockBlob getBlockBlob(CloudBlobContainer container, string blobName)
+		private static CloudBlockBlob getBlockBlob(CloudBlobContainer container, string blobName)
 		{
 			var blockBlob = container.GetBlockBlobReference(blobName);
 
