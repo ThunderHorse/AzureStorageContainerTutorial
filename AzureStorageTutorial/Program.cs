@@ -17,6 +17,11 @@ namespace AzureStorageTutorial
 		private const string FILE_TO_UPLOAD = "TestingBlockBlobs.txt";
 		private const string FILE_TO_DOWNLOAD = "ConfirmingBlockBlobs.txt";
 
+		private const string MY_CONTAINER_NAME = "myblobstorage";
+		private const string MY_BLOB_NAME = "myblob";
+
+		private const string STORAGE_ACCT_CONN_STRING_NAME = "StorageConnectionString";
+
 		static void Main(string[] args)
 		{
 			Program p = new Program();
@@ -32,7 +37,7 @@ namespace AzureStorageTutorial
 			var cloudBlobClient = cloudStorageAccount.CreateCloudBlobClient();
 
 			//CloudBlobContainer - Reference to a container (every blob in Azure storage must reside in a container)
-			CloudBlobContainer container = cloudBlobClient.GetContainerReference("myblobstorage");
+			CloudBlobContainer container = cloudBlobClient.GetContainerReference(MY_CONTAINER_NAME);
 
 			container.CreateIfNotExists();
 
@@ -52,13 +57,16 @@ namespace AzureStorageTutorial
 
 			//Download blobs
 			downloadBlobs(container);
+
+			//Delete blobs
+			deleteBlobs(container);
 		}
 
 		//Parse the connection string and return a reference to the storage account
 		private CloudStorageAccount parseConnectionString()
 		{
 			CloudStorageAccount cloudStorageAccount = CloudStorageAccount.Parse(
-				CloudConfigurationManager.GetSetting("StorageConnectionString"));
+				CloudConfigurationManager.GetSetting(STORAGE_ACCT_CONN_STRING_NAME));
 
 			return cloudStorageAccount;
 		}
@@ -80,7 +88,7 @@ namespace AzureStorageTutorial
 		private void uploadFile(CloudBlobContainer container)
 		{
 			//Retrieve reference to blob named "myblob"
-			CloudBlockBlob blockBlob = container.GetBlockBlobReference("myblob");
+			var blockBlob = getBlockBlob(container, MY_BLOB_NAME);
 
 			//Create or overwrite the "myblob" blob with contents from a local file
 			using (var fileStream = System.IO.File.OpenRead(FILE_PATH + FILE_TO_UPLOAD))
@@ -120,7 +128,7 @@ namespace AzureStorageTutorial
 		{
 			var downloadFilePath = FILE_PATH + FILE_TO_DOWNLOAD;
 
-			CloudBlockBlob blockBlob = container.GetBlockBlobReference("myblob");
+			var blockBlob = getBlockBlob(container, MY_BLOB_NAME);
 
 			//To in memory stream
 			string text;
@@ -140,5 +148,20 @@ namespace AzureStorageTutorial
 				Console.WriteLine("Path to downloaded file: {0}", downloadFilePath);
 			}
 		}
+
+		//Deleting Blob Data
+		private void deleteBlobs(CloudBlobContainer container)
+		{
+			var myBlob = getBlockBlob(container, MY_BLOB_NAME);
+		}
+
+		#region Helper Methods
+		private CloudBlockBlob getBlockBlob(CloudBlobContainer container, string blobName)
+		{
+			var blockBlob = container.GetBlockBlobReference(blobName);
+
+			return blockBlob;
+		}
+		#endregion
 	}
 }
